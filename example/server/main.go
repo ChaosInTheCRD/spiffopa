@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spiffe/go-spiffe/v2/bundle/x509bundle"
 	"github.com/spiffe/go-spiffe/v2/spiffeid"
+	stlsconfig "github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	"github.com/spiffe/go-spiffe/v2/svid/x509svid"
 	"net/http"
 	"time"
@@ -26,7 +27,7 @@ func main() {
 	r := mux.NewRouter()
 
 	s := &SPIFFESource{}
-	tlsConfig := tlsconfig.MTLSServerConfig(s, s, tlsconfig.OPAAuthorize())
+	tlsConfig := stlsconfig.MTLSServerConfig(s, s, tlsconfig.OPAAuthorize(fetchConfig("localhost:8080")))
 	th := testHandler(time.RFC3339)
 	r.Handle("/", th)
 	server := &http.Server{
